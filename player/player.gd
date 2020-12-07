@@ -8,7 +8,7 @@ var y = 0
 export var acceleration = 100
 export var speed = 250
 
-var frozen = false
+onready var bounceTimer = $bounceTimer
 
 func _ready():
 	y = -1
@@ -16,13 +16,13 @@ func _ready():
 func _physics_process(delta):
 	var direction = Vector2();
 	
-	if not frozen:
+	if bounceTimer.is_stopped():
 		x = 0
 		if Input.is_action_pressed("right"): x = 1
 		if Input.is_action_pressed("left"): x = -1
 	
 	if is_on_wall(): 
-		freeze()
+		bounceTimer.start()
 		if x == 1: x = -1
 		else: x = 1
 	
@@ -45,11 +45,6 @@ func _physics_process(delta):
 				if collider.is_in_group("bomb"):
 					collider.die()
 					die()
-
-func freeze():
-	frozen = true
-	yield(get_tree().create_timer(1), "timeout")
-	frozen = false
 
 func die():
 	visible = false
